@@ -1,0 +1,9 @@
+{
+  "realm": "E-Commerce",
+  "serverUrl": "http://localhost:8080/",
+  "clientId": "apisix",
+  "credentials": {
+    "secret": "Br4iXekg8CwowqhFBpBwTYljbtB5uOs9"
+  },
+  "confidential-port": 0
+}

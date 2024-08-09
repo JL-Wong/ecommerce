@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+  nats:
+    image: nats:2.1.9
+    ports:
+      - "4222:4222"
+
+  go-nats-app:
+    container_name: go-nats-app
+    build: .
+    environment:
+      DATABASE_URL: "host=go_nats_db user=postgres password=postgres dbname=postgres sslmode=disable"
+      NATS_URL: "nats://nats:4222"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - nats
+      - go_nats_db
+
+  go_nats_db:
+    container_name: go_nats_db
+    image: postgres:12
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:  
+  pgdata: {}
+

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# URL of your REST API that publishes to NATS
+REST_API_URL="http://localhost:8000/users"
+
+# Number of requests to send
+NUM_REQUESTS=2
+
+for i in $(seq 1 $NUM_REQUESTS)
+do
+  curl -X GET $REST_API_URL -d "{\"subject\":\"user.get\", \"message\":\"user001 $i\"}" -H "Content-Type: application/json"
+done
