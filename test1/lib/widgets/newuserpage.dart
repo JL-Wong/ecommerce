@@ -56,15 +56,19 @@ class Newuserpage extends StatelessWidget {
                   )
                 ], 
                 selected: {_addusercontroller.role},
-                onSelectionChanged: (newSelection){
-                  _addusercontroller.setRole(newSelection as String);
+                // emptySelectionAllowed: false,
+                onSelectionChanged: (Set<String> newSelection){
+                  _addusercontroller.setRole(newSelection.first);
                 },
               ),
             ),
             const SizedBox(height: 50,),
             MaterialButton(
               onPressed: () async{
-                // handle button press
+
+                if (_addusercontroller.role.isEmpty) {
+                  Get.snackbar("Role Required", "Please select one role for the user");
+                }
                 // Handle button press
                 bool success = await _addusercontroller.add();
                 

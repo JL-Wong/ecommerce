@@ -26,25 +26,25 @@ class Homepage extends StatelessWidget {
   Widget build(BuildContext context) {
     //extract the current url
     final Uri currentUri = Uri.base;
-
+    // print(currentUri);
     final String? code = currentUri.queryParameters['code'];
     print(code);
 
-    if (web.window.localStorage['activeTabs'] == null) {
-      web.window.localStorage['activeTabs'] = '0';
-    }
-    // Initialize localStorage for tracking active tabs
-    int activeTabs = int.parse(web.window.localStorage['activeTabs']!);
-    web.window.localStorage['activeTabs'] = (activeTabs + 1).toString();
+    // if (web.window.localStorage['activeTabs'] == null) {
+    //   web.window.localStorage['activeTabs'] = '0';
+    // }
+    // // Initialize localStorage for tracking active tabs
+    // int activeTabs = int.parse(web.window.localStorage['activeTabs']!);
+    // web.window.localStorage['activeTabs'] = (activeTabs + 1).toString();
 
-    // Handle window unload
-    web.window.addEventListener('click',(void event){
-      int activeTabs = int.parse(web.window.localStorage['activeTabs']!);
-      web.window.localStorage['activeTabs'] = (activeTabs - 1).toString();
-      if (int.parse(web.window.localStorage['activeTabs']!) <= 0) {
-        _logoutcontroller.logout();
-      }
-    }.toJS);
+    // // Handle window unload
+    // web.window.addEventListener('click',(void event){
+    //   int activeTabs = int.parse(web.window.localStorage['activeTabs']!);
+    //   web.window.localStorage['activeTabs'] = (activeTabs - 1).toString();
+    //   if (int.parse(web.window.localStorage['activeTabs']!) <= 0) {
+    //     _logoutcontroller.logout();
+    //   }
+    // }.toJS);
 
 
     // web.window.addEventListener('storage', callback)

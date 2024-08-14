@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 class Addusercontroller extends GetxController{
   final _username = ''.obs;
   final _email = ''.obs;
-  final _role = ''.obs;
+  final _role = 'Packer'.obs;
 
   String get username => _username.value;
   String get email => _email.value;
@@ -22,13 +22,14 @@ class Addusercontroller extends GetxController{
       body: jsonEncode({
         'username':username,
         'email':email,
+        'realmRoles' :role
       }),
       headers:{
         'Content-Type':'application/json',
       },
     );
 
-    if(response.statusCode == 201){
+    if(response.statusCode == 200){
       return true;
     }else{
       return false;

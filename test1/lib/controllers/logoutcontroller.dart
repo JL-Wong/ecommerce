@@ -15,8 +15,8 @@ class Logoutcontroller extends GetxController{
     final response = await http.post(
       Uri.parse('http://127.0.0.1:9080/logout'),
       body: json.encode({
-        // 'id_token': idToken,
-        'id_token': web.window.localStorage.getItem('token'),
+        'id_token': idToken,
+        // 'id_token': web.window.localStorage.getItem('token'),
       }),
       headers: {
         'Content-Type': 'application/json',

@@ -1,9 +1,12 @@
 {
   "realm": "E-Commerce",
-  "serverUrl": "http://localhost:8080/",
-  "clientId": "apisix",
+  "auth-server-url": "http://localhost:8080/",
+  "ssl-required": "external",
+  "resource": "apisix",
   "credentials": {
-    "secret": "Br4iXekg8CwowqhFBpBwTYljbtB5uOs9"
+    "secret": "t8jdxl6oUfvsypAyGiZOeUseGlk0tjrF"
   },
-  "confidential-port": 0
+  "confidential-port": 0,
+  "Admin":"58d7bbe8-a1fa-42ab-beac-18319620d4f3",
+  "Packer":"f92e2504-c6fc-4a10-baaf-fc7f10ab57a9"
 }

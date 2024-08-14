@@ -3,6 +3,7 @@ const axios = require('axios')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const jwt = require('jsonwebtoken')
+const keycloakConfig = require('./keycloak.json')
 
 const app = express()
 app.use(cors())
@@ -14,15 +15,15 @@ const sessionStore = {}; // In-memory store for active sessions
 
 
 app.post('/google-login', async (req, res) => {
-  const baseUrl = 'http://localhost:8080/realms/E-Commerce/protocol/openid-connect/auth'
+  const baseUrl = `${keycloakConfig['auth-server-url']}realms/E-Commerce/protocol/openid-connect/auth`
   const clientID = 'apisix'
   const redirectUrl = 'http://localhost:52000/home'
 
   const authUrl = `${baseUrl}?client_id=${clientID}&redirect_uri=${redirectUrl}&response_type=code&scope=openid email profile`;
-  
+  console.log(authUrl)
   //send to frontend as JSON format
   res.json({ authUrl: authUrl });
-  // res.redirect(authUrl)
+
 })
 
 //tis is use for the add user function
@@ -32,11 +33,11 @@ app.post('/exchange', async (req, res) => {
   const { code } = req.body;
   // console.log(code)
   const clientID = 'apisix'
-  const clientSecret = 'Br4iXekg8CwowqhFBpBwTYljbtB5uOs9'
+  const clientSecret = 't8jdxl6oUfvsypAyGiZOeUseGlk0tjrF'
   const redirectUrl = 'http://localhost:52000/home'
   const authCode = code
 
-  const url = 'http://localhost:8080/realms/E-Commerce/protocol/openid-connect/token';
+  const url = `${keycloakConfig['auth-server-url']}realms/E-Commerce/protocol/openid-connect/token`;
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
   };
@@ -52,6 +53,7 @@ app.post('/exchange', async (req, res) => {
     const response = await axios.post(url, data, { headers });
     if (response.status === 200) {
       const { access_token, id_token, refresh_token } = response.data;
+      
       //Update the refresh token 
       //   refreshToken = refresh_token
       //   console.log(response.data)
@@ -74,7 +76,7 @@ app.post('/exchange', async (req, res) => {
 app.post('/logout', async (req, res) => {
   const { id_token } = req.body;
   console.log(id_token)
-  const url = 'http://localhost:8080/realms/E-Commerce/protocol/openid-connect/logout';
+  const url = `${keycloakConfig['auth-server-url']}realms/E-Commerce/protocol/openid-connect/logout`;
   // console.log(url)
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded'
@@ -99,14 +101,16 @@ app.post('/logout', async (req, res) => {
 });
 
 app.post('/add', async (req, res) => {
-  const { username, email } = req.body;
+  const { username, email, realmRoles } = req.body;
+  
 
   const decoded = jwt.decode(access_token1)
   // console.log(decoded)
   const getCompany = decoded['company']
   // console.log(getCompany)
   // console.log(access_token1)
-  const url = 'http://localhost:8080/admin/realms/E-Commerce/users';
+  const url = `${keycloakConfig['auth-server-url']}admin/realms/E-Commerce/users`;
+  const roleAssignmentUrl = `${keycloakConfig['auth-server-url']}admin/realms/E-Commerce/users/{userId}/role-mappings/realm`;
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${access_token1}`,
@@ -115,19 +119,34 @@ app.post('/add', async (req, res) => {
     username: username,
     email: email,
     enabled: true,
-    groups: getCompany
+    groups: getCompany,
   }
 
   try {
     const response = await axios.post(url, data, { headers });
-    if (response.status === 200) {
-      console.log("User created")
-      res.json("User created")
+    //there will be no response data, only status indicate success of fail
+    if (response.status === 201) {
+      
+      const userID = await getSingleUserID(email)
+      // console.log(`this is the add function userID ${userID}`)
+      const rolesData = [{
+        "id":realmRoles == 'Packer' ? keycloakConfig.Packer : keycloakConfig.Admin,
+        "name":realmRoles
+      }]
+      console.log(rolesData)
+      const roleResponse = await axios.post(roleAssignmentUrl.replace('{userId}', userID), rolesData, { headers });
+      console.log(roleResponse.status)
+      if (roleResponse.status === 204) { // Role assignment successful
+        console.log("User created and roles assigned");
+        res.json("User created and roles assigned");
+      } else {
+        res.status(roleResponse.status).send('Failed to assign roles');
+      }
     } else {
-      res.status(response.status).send('Failed to logout');
+      res.status(response.status).send('Failed to create user');
     }
   } catch (error) {
-    console.error('Error fetching logout:', error);
+    console.error('Error:', error);
     res.status(500).send('Internal Server Error');
   }
 
@@ -136,16 +155,14 @@ app.post('/add', async (req, res) => {
 
 app.get('/get-user',async(req,res)=>{
   const authHeader = req.headers['authorization']
-  // console.log(req.headers)
-  // console.log(authHeader)
   const token = authHeader.split(' ')[1]
   const decoded = jwt.decode(token)
-  console.log(decoded)
+  // console.log(decoded)
   const getCompany = decoded['company']
   const company = getCompany.toString().replace(/\//g,'')
 
 
-  const url = `http://localhost:8080/admin/realms/E-Commerce/groups?search=${company}`
+  const url = `${keycloakConfig['auth-server-url']}admin/realms/E-Commerce/groups?search=${company}`
   const headers = {
     'Authorization': `Bearer ${token}`,
   };
@@ -155,7 +172,7 @@ app.get('/get-user',async(req,res)=>{
     // console.log(response)
     const id = response.data[0]['id']
     // console.log(id)
-    const url2 = `http://localhost:8080/admin/realms/E-Commerce/groups/${id}/members`
+    const url2 = `${keycloakConfig['auth-server-url']}admin/realms/E-Commerce/groups/${id}/members`
     if(!id){
       res.status(response.status).send('Failed to get users');
     }
@@ -176,7 +193,7 @@ app.put('/update-user',async(req,res)=>{
   //this header include the Bearer so need to split
   const authHeader = req.headers['authorization']
   const token = authHeader.split(' ')[1]
-  const url = `http://localhost:8080/admin/realms/E-Commerce/users/${id}`
+  const url = `${keycloakConfig['auth-server-url']}admin/realms/E-Commerce/users/${id}`
   const headers = {
     'Authorization': `Bearer ${token}`,
   };
@@ -204,7 +221,7 @@ app.delete('/delete-user',async(req,res)=>{
   //this header include the Bearer so need to split
   const authHeader = req.headers['authorization']
   const token = authHeader.split(' ')[1]
-  const url = `http://localhost:8080/admin/realms/E-Commerce/users/${id}`
+  const url = `${keycloakConfig['auth-server-url']}admin/realms/E-Commerce/users/${id}`
 
   const headers = {
     'Authorization': `Bearer ${token}`,
@@ -225,7 +242,23 @@ app.delete('/delete-user',async(req,res)=>{
 })
 
 
+async function getSingleUserID(email){
+  const url = `${keycloakConfig['auth-server-url']}admin/realms/E-Commerce/users?search=${email}`
+  const headers ={
+    'Authorization': `Bearer ${access_token1}`,
+  }
+  try {
+    const response = await axios.get(url, { headers })
 
+    if(response.status == 200){
+      const userID = response.data[0]['id']
+      // console.log(userID)
+      return userID
+    }
+  } catch (error) {
+    console.error('Fail to get user info:', error)
+  }
+}
 
 
 PORT = 3000
