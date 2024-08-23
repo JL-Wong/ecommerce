@@ -15,8 +15,8 @@ class Logoutcontroller extends GetxController{
     final response = await http.post(
       Uri.parse('http://127.0.0.1:9080/logout'),
       body: json.encode({
-        'id_token': idToken,
-        // 'id_token': web.window.localStorage.getItem('token'),
+        // 'id_token': idToken,
+        'id_token': web.window.localStorage.getItem('token'),
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -25,6 +25,8 @@ class Logoutcontroller extends GetxController{
 
     if (response.statusCode == 200) {
       web.window.localStorage.removeItem('token');
+      final now = DateTime.now();
+      web.window.localStorage.setItem('logout', now.toIso8601String());
       return true;
     } else {
       print(response.statusCode);

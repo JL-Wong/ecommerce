@@ -30,24 +30,11 @@ class Homepage extends StatelessWidget {
     final String? code = currentUri.queryParameters['code'];
     print(code);
 
-    // if (web.window.localStorage['activeTabs'] == null) {
-    //   web.window.localStorage['activeTabs'] = '0';
-    // }
-    // // Initialize localStorage for tracking active tabs
-    // int activeTabs = int.parse(web.window.localStorage['activeTabs']!);
-    // web.window.localStorage['activeTabs'] = (activeTabs + 1).toString();
-
-    // // Handle window unload
-    // web.window.addEventListener('click',(void event){
-    //   int activeTabs = int.parse(web.window.localStorage['activeTabs']!);
-    //   web.window.localStorage['activeTabs'] = (activeTabs - 1).toString();
-    //   if (int.parse(web.window.localStorage['activeTabs']!) <= 0) {
-    //     _logoutcontroller.logout();
-    //   }
-    // }.toJS);
-
-
-    // web.window.addEventListener('storage', callback)
+    web.window.addEventListener('storage', (web.StorageEvent event){
+      if(event.key == 'logout'){
+        Get.offAllNamed('/login');
+      }
+    }.toJS);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       web.window.history.replaceState(null, 'unused', '/home');
@@ -116,7 +103,11 @@ class Homepage extends StatelessWidget {
                       ListTile(
                         title: const Text('New User'),
                         onTap: () {
-                          _screencontroller.selectedpage('new_user');
+                          if(_exchangecontroller.userAccess){
+                            _screencontroller.selectedpage('new_user');
+                          }
+                          Get.snackbar("No access", "Unauthorised access");
+                          
                         },
                       ),
                       ListTile(

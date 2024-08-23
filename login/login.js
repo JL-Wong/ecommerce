@@ -62,8 +62,10 @@ app.post('/exchange', async (req, res) => {
       // const role = decoded['realm_access']['roles'].toString()
       // console.log(role.toString())
       access_token1 = access_token
+
+      const access = checkUserAccess(access_token)
       console.log(access_token)
-      res.json({ access_token, id_token });
+      res.json({ access_token, id_token, access});
     } else {
       res.status(response.status).send('Failed to get token');
     }
@@ -103,7 +105,6 @@ app.post('/logout', async (req, res) => {
 app.post('/add', async (req, res) => {
   const { username, email, realmRoles } = req.body;
   
-
   const decoded = jwt.decode(access_token1)
   // console.log(decoded)
   const getCompany = decoded['company']
@@ -133,9 +134,9 @@ app.post('/add', async (req, res) => {
         "id":realmRoles == 'Packer' ? keycloakConfig.Packer : keycloakConfig.Admin,
         "name":realmRoles
       }]
-      console.log(rolesData)
+      // console.log(rolesData)
       const roleResponse = await axios.post(roleAssignmentUrl.replace('{userId}', userID), rolesData, { headers });
-      console.log(roleResponse.status)
+      // console.log(roleResponse.status)
       if (roleResponse.status === 204) { // Role assignment successful
         console.log("User created and roles assigned");
         res.json("User created and roles assigned");
@@ -157,7 +158,7 @@ app.get('/get-user',async(req,res)=>{
   const authHeader = req.headers['authorization']
   const token = authHeader.split(' ')[1]
   const decoded = jwt.decode(token)
-  // console.log(decoded)
+  console.log(decoded)
   const getCompany = decoded['company']
   const company = getCompany.toString().replace(/\//g,'')
 
@@ -241,7 +242,6 @@ app.delete('/delete-user',async(req,res)=>{
 
 })
 
-
 async function getSingleUserID(email){
   const url = `${keycloakConfig['auth-server-url']}admin/realms/E-Commerce/users?search=${email}`
   const headers ={
@@ -260,6 +260,14 @@ async function getSingleUserID(email){
   }
 }
 
+function checkUserAccess(token){
+  const decoded = jwt.decode(token)
+  const getRoles = decoded['realm_access'].roles
+  const checkRole = getRoles.includes('Admin')
+  
+  return checkRole
+  
+}
 
 PORT = 3000
 app.listen(PORT, () => {

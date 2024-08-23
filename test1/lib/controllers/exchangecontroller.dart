@@ -8,10 +8,12 @@ class Exchangecontroller extends GetxController{
   final _code = ''.obs;
   final _idToken = ''.obs;
   final _accessToken = ''.obs;
+  final _userAccess = false.obs;
 
   String get code => _code.value;
   String get idToken => _idToken.value;
   String get accessToken => _accessToken.value;
+  bool get userAccess => _userAccess.value;
 
   void setCode(String value) => _code.value = value;
 
@@ -32,6 +34,7 @@ class Exchangecontroller extends GetxController{
       // print(idToken);
       web.window.localStorage['token'] = _idToken.value;
       _accessToken.value = responseBody['access_token'];
+      _userAccess.value = responseBody['access'];
       
       // print('This is access token : $accessToken');
       return true;
