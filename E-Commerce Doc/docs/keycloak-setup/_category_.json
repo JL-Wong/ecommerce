@@ -1,0 +1,8 @@
+{
+  "label": "Keycloak setup",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "How to configure Keycloak"
+  }
+}
