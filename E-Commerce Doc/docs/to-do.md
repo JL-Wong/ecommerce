@@ -2,7 +2,11 @@
 
 1. Keycloak have `check_session_iframe`, based on documentation is used to check for the SSO session, can research on this to enhance the session control function
 
-2. Research on how to query big data without affecting the performance
+2. Research on how to store and query big data without affecting the performance, so method for further explore
+
+    1. Columnar Databases
+
+    2. Presto (or Trino)
 
 3. Research on how to enable different access token when login from the desktop app and also limit to one login per user only(no concurrent login)
 
