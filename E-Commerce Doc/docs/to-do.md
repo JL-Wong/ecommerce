@@ -18,7 +18,7 @@
 
     1. inside the group create sub-group
 
-6. Research on the NATS.io message queue
+6. Research on the NATS.io message queue, on how the load balancing work, others feature that can handle large API call
 
 
 
