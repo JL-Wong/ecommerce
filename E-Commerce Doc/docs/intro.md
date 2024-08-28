@@ -40,6 +40,18 @@ git clone https://github.com/apache/apisix-dashboard.git
 
 Locate the conf.yaml file in the api folder: `xxxx\apisix-dashboard\api\conf`
 
+First comment out the **allow_list** to allow any ip to access
+
+![apisix-dashboard-conf1](/img/apisix-dashboard-conf1.png)
+
+Then change the etcd's endpoint to your local ip address
+
+![apisix-dashboard-conf](/img/apisix-dashboard-conf.png)
+
+After that, comment out the **oidc** part
+
+![apisix-dashboard-conf2](/img/apisix-dashboard-conf2.png)
+
 Then replace the `CONFIG_FILE` with the path
 ```bash
 docker pull apache/apisix-dashboard
