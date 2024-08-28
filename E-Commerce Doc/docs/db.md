@@ -14,5 +14,6 @@ sidebar_position: 6
 
 3. For the rest of the DB, it is not finalise, it just the first version of the general JSON, so please change it along the process
 
+4. Below is the full image of the DB 
 ![DB-image](/img/db-E-commerce.drawio.png)
 
