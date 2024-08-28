@@ -13,3 +13,6 @@ sidebar_position: 6
 2. The red square is also from SQL acc, this is use to map the fee on platform so when do posting it will capture into the invoice
 
 3. For the rest of the DB, it is not finalise, it just the first version of the general JSON, so please change it along the process
+
+![DB-image](/img/db-E-commerce.drawio.png)
+
