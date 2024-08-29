@@ -10,7 +10,7 @@
 
 3. Research on how to enable different access token when login from the desktop app and also limit to one login per user only(no concurrent login). Below is some idea
 
-    1. use different client for different device
+    1. use different client for different device(can use user-agent to determine on the device info)
 
 4. Research on the scope for user management, when the admin can assign different scope to the users added 
 
