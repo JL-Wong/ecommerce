@@ -24,7 +24,10 @@ sidebar_position: 6
 
 6. The **Orer_item** table is a bridge between **SKU** and **Order** as they are many to many relationship 
 
+7. The **User** in the db can ignore it as using the **Keycloak** to manage the user
 
-Below is the full image of the DB 
+8. Below is the full image of the DB 
 ![DB-image](/img/db-E-commerce.drawio.png)
+
+
 

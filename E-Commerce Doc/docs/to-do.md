@@ -12,11 +12,11 @@
 
     1. use different client for different device(can use user-agent to determine on the device info)
 
-4. Research on the scope for user management, when the admin can assign different scope to the users added 
+4. Research on the scope for user management, if the admin can assign different scope to the users? 
 
 5. Research on how to assign store to particular user. Below is some idea
 
-    1. inside the group create sub-group
+    1. inside the group create sub-group, then at the edit user admin can add or remove a store to the particular user
 
 6. Research on the NATS.io message queue, on how the load balancing work, others feature that can handle large API call
 
